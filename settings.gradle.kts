@@ -1,6 +1,6 @@
 rootProject.name = "otusJava"
+include("hw01-gradle")
 include("L01-gradle")
-
 
 pluginManagement {
     val jgitver: String by settings
@@ -23,3 +23,4 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
+
