@@ -1,24 +1,50 @@
 package homework;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
-@SuppressWarnings({"java:S1186", "java:S1135", "java:S1172"}) // при выполнении ДЗ эту аннотацию надо удалить
 public class CustomerService {
 
-    // todo: 3. надо реализовать методы этого класса
-    // важно подобрать подходящую Map-у, посмотрите на редко используемые методы, они тут полезны
-    Map<Customer, String> customers = new HashMap<>();
+    public Map<Customer, String> customers = new HashMap<>();
 
     public Map.Entry<Customer, String> getSmallest() {
-        // Возможно, чтобы реализовать этот метод, потребуется посмотреть как Map.Entry сделан в jdk
+        Map<Customer, String> minCustomers = new HashMap<>();
+        Customer minScoresCustomer;
+        long minScores = Long.MAX_VALUE;
+        for (Map.Entry<Customer, String> entry : this.customers.entrySet()) {
 
-        return null; // это "заглушка, чтобы скомилировать"
+            Customer customerSmallestScore = entry.getKey();
+            if (customerSmallestScore.getScores() < minScores) {
+                minScores = customerSmallestScore.getScores();
+                minCustomers.clear();
+                minScoresCustomer = new Customer(entry.getKey().getId(), entry.getKey().getName(), entry.getKey().getScores());
+                minCustomers.put(minScoresCustomer, entry.getValue());
+            }
+        }
+        return minCustomers.entrySet().stream().iterator().next();
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        return null; // это "заглушка, чтобы скомилировать"
+        Map<Customer, String> nextCustomers = new HashMap<>();
+        Customer nextScoresCustomer;
+        TreeMap<Customer, String> sortedByScores = new TreeMap<>(Comparator.comparingLong(o -> o.getScores()));
+        sortedByScores.put(customer, null);
+        sortedByScores.putAll(customers);
+        int counter = 0;
+        for (Map.Entry<Customer, String> entry : sortedByScores.tailMap(customer).entrySet()) {
+            if (counter == 1) {
+                nextScoresCustomer = new Customer(entry.getKey().getId(), entry.getKey().getName(), entry.getKey().getScores());
+                nextCustomers.put(nextScoresCustomer, entry.getValue());
+                return nextCustomers.entrySet().stream().iterator().next();
+            }
+            counter++;
+        }
+        return null;
     }
 
-    public void add(Customer customer, String data) {}
+    public void add(Customer customer, String data) {
+        customers.put(customer, data);
+    }
 }
