@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CustomerReverseOrder {
 
-    List<Customer> customers = new LinkedList<>();
+   public final List<Customer> customers = new LinkedList<>();
 
     public void add(Customer customer) {
         customers.add(customer);

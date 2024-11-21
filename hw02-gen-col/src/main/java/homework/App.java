@@ -1,8 +1,14 @@
 package homework;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 
 public class App {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
+
     public static void main(String[] args) {
         Customer customer1 = new Customer(1, "Ivan1", 233);
         Customer customer2 = new Customer(2, "Petr2", 11);
@@ -17,28 +23,16 @@ public class App {
         cs.add(customer4, "data4");
         cs.add(customer5, "data5");
 
-
         System.out.println("Smallest: " + cs.getSmallest().getKey().getScores());
+        LOGGER.info("Smallest: {}", cs.getSmallest().getKey().getScores());
 
         Map.Entry<Customer, String> smallestScore = cs.getSmallest();
-        System.out.println(customer1);
+        LOGGER.info(String.valueOf(customer1));
         smallestScore.getKey().setName("Vasyl");
-        System.out.println(customer1);
+        LOGGER.info(String.valueOf(customer1));
 
-//        //cs.getNext(customer5);
-//     //   System.out.println("Next for 5 (2, \"Petr2\", 11): " + cs.getNext(customer5).getKey().getScores() + " " + cs.getNext(customer5).getKey().getName() );
-//        System.out.println("Next for 1 (id3 \"Pavel\", 888): " + cs.getNext(customer1).getKey().getScores() + " " + cs.getNext(customer1).getKey().getName() );
-//
-//        cs.getNext(customer2);
-//        System.out.println("Next for 2 (id1 \"Ivan\", 233): " + cs.getNext(customer2).getKey().getScores() + " " + cs.getNext(customer2).getKey().getName() );
-//
-//        System.out.println("Next for 3 (null): " + cs.getNext(customer3));
-
-        System.out.println("Test must be 1" + cs.getNext(new Customer(10, "Key", 20)));
-
-        cs.getSmall();
-        System.out.println(cs.getSmall());
-
-
+        LOGGER.info("Test must be 1: {}", cs.getNext(new Customer(10, "Key", 20)));
+        LOGGER.info("Test must be null: {}", cs.getNext(customer3));
+        LOGGER.info("Smallest scores: {}", cs.getSmallest());
     }
 }

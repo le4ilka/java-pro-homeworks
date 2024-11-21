@@ -4,49 +4,37 @@ import java.util.*;
 
 public class CustomerService {
 
-    public Map<Customer, String> customers = new HashMap<>();
-
-    public Map.Entry<Customer, String> getSmall() {
-        NavigableMap<Long, Map.Entry<Customer, String>> navMap = new TreeMap<>();
-        for (Map.Entry<Customer, String> entry : this.customers.entrySet()) {
-            navMap.put(entry.getKey().getScores(), entry);
-        }
-        return navMap.firstEntry().getValue();
-    }
+    public final Map<Customer, String> customers = new HashMap<>();
 
     public Map.Entry<Customer, String> getSmallest() {
-        Map<Customer, String> minCustomers = new HashMap<>();
-        Customer minScoresCustomer;
-        long minScores = Long.MAX_VALUE;
-        for (Map.Entry<Customer, String> entry : this.customers.entrySet()) {
+        Map<Customer, String> smallScoresCustomers = new HashMap<>();
 
-            Customer customerSmallestScore = entry.getKey();
-            if (customerSmallestScore.getScores() < minScores) {
-                minScores = customerSmallestScore.getScores();
-                minCustomers.clear();
-                minScoresCustomer = new Customer(entry.getKey().getId(), entry.getKey().getName(), entry.getKey().getScores());
-                minCustomers.put(minScoresCustomer, entry.getValue());
-            }
+        NavigableMap<Long, Map.Entry<Customer, String>> sortedByScoresCustomers = new TreeMap<>();
+        for (Map.Entry<Customer, String> entry : this.customers.entrySet()) {
+            sortedByScoresCustomers.put(entry.getKey().getScores(), entry);
         }
-        return minCustomers.entrySet().stream().iterator().next();
+        smallScoresCustomers.put(new Customer(sortedByScoresCustomers.firstEntry().getValue().getKey().getId(),
+                        sortedByScoresCustomers.firstEntry().getValue().getKey().getName(),
+                        sortedByScoresCustomers.firstEntry().getValue().getKey().getScores()),
+                new String(sortedByScoresCustomers.firstEntry().getValue().getValue()));
+        return smallScoresCustomers.entrySet().stream().iterator().next();
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        Map<Customer, String> nextCustomers = new HashMap<>();
-        Customer nextScoresCustomer;
-        TreeMap<Customer, String> sortedByScores = new TreeMap<>(Comparator.comparingLong(o -> o.getScores()));
+        Map<Customer, String> nextScoresCustomers = new HashMap<>();
+
+        NavigableMap<Customer, String> sortedByScores = new TreeMap<>(Comparator.comparingLong(o -> o.getScores()));
         sortedByScores.put(customer, null);
         sortedByScores.putAll(customers);
-        int counter = 0;
-        for (Map.Entry<Customer, String> entry : sortedByScores.tailMap(customer).entrySet()) {
-            if (counter == 1) {
-                nextScoresCustomer = new Customer(entry.getKey().getId(), entry.getKey().getName(), entry.getKey().getScores());
-                nextCustomers.put(nextScoresCustomer, entry.getValue());
-                return nextCustomers.entrySet().stream().iterator().next();
-            }
-            counter++;
-        }
-        return null;
+        if (sortedByScores.tailMap(customer, false).size() == 0)
+            return null;
+
+        nextScoresCustomers.put(new Customer(sortedByScores.tailMap(customer, false).firstKey().getId(),
+                        sortedByScores.tailMap(customer, false).firstKey().getName(),
+                        sortedByScores.tailMap(customer, false).firstKey().getScores()),
+                sortedByScores.tailMap(customer, false).get(sortedByScores.tailMap(customer, false).firstKey()));
+
+        return nextScoresCustomers.entrySet().stream().iterator().next();
     }
 
     public void add(Customer customer, String data) {
