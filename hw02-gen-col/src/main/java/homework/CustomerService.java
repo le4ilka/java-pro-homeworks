@@ -1,13 +1,18 @@
 package homework;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class CustomerService {
 
     public Map<Customer, String> customers = new HashMap<>();
+
+    public Map.Entry<Customer, String> getSmall() {
+        NavigableMap<Long, Map.Entry<Customer, String>> navMap = new TreeMap<>();
+        for (Map.Entry<Customer, String> entry : this.customers.entrySet()) {
+            navMap.put(entry.getKey().getScores(), entry);
+        }
+        return navMap.firstEntry().getValue();
+    }
 
     public Map.Entry<Customer, String> getSmallest() {
         Map<Customer, String> minCustomers = new HashMap<>();
