@@ -3,41 +3,25 @@ package homework;
 import java.util.*;
 
 public class CustomerService {
-
-    public final Map<Customer, String> customers = new HashMap<>();
+    public final NavigableMap<Customer, String> customers = new TreeMap<>(Comparator.comparingLong(o -> o.getScores()));
 
     public Map.Entry<Customer, String> getSmallest() {
-        Map<Customer, String> smallScoresCustomers = new HashMap<>();
-
-        NavigableMap<Long, Map.Entry<Customer, String>> sortedByScoresCustomers = new TreeMap<>();
-        for (Map.Entry<Customer, String> entry : this.customers.entrySet()) {
-            sortedByScoresCustomers.put(entry.getKey().getScores(), entry);
-        }
-        smallScoresCustomers.put(new Customer(sortedByScoresCustomers.firstEntry().getValue().getKey().getId(),
-                        sortedByScoresCustomers.firstEntry().getValue().getKey().getName(),
-                        sortedByScoresCustomers.firstEntry().getValue().getKey().getScores()),
-                new String(sortedByScoresCustomers.firstEntry().getValue().getValue()));
-        return smallScoresCustomers.entrySet().stream().iterator().next();
+        var item = customers.firstEntry();
+        return copy(item);
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        Map<Customer, String> nextScoresCustomers = new HashMap<>();
-
-        NavigableMap<Customer, String> sortedByScores = new TreeMap<>(Comparator.comparingLong(o -> o.getScores()));
-        sortedByScores.put(customer, null);
-        sortedByScores.putAll(customers);
-        if (sortedByScores.tailMap(customer, false).size() == 0)
-            return null;
-
-        nextScoresCustomers.put(new Customer(sortedByScores.tailMap(customer, false).firstKey().getId(),
-                        sortedByScores.tailMap(customer, false).firstKey().getName(),
-                        sortedByScores.tailMap(customer, false).firstKey().getScores()),
-                sortedByScores.tailMap(customer, false).get(sortedByScores.tailMap(customer, false).firstKey()));
-
-        return nextScoresCustomers.entrySet().stream().iterator().next();
+        var item = customers.higherEntry(customer);
+        return item == null ? null : copy(item);
     }
 
     public void add(Customer customer, String data) {
         customers.put(customer, data);
+    }
+
+    private Map.Entry<Customer, String> copy(Map.Entry<Customer, String> entry) {
+        Map<Customer, String> copyMap = new HashMap<>();
+        copyMap.put(new Customer(entry.getKey().getId(), entry.getKey().getName(), entry.getKey().getScores()), entry.getValue());
+        return copyMap.entrySet().stream().iterator().next();
     }
 }

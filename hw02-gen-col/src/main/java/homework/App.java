@@ -31,8 +31,8 @@ public class App {
         smallestScore.getKey().setName("Vasyl");
         LOGGER.info(String.valueOf(customer1));
 
-        LOGGER.info("Test must be 1: {}", cs.getNext(new Customer(10, "Key", 20)));
-        LOGGER.info("Test must be null: {}", cs.getNext(customer3));
+        LOGGER.info("!!!Test must be 1 (next to 20 Scores): {}", cs.getNext(new Customer(10, "Key", 20)));
+        LOGGER.info("!!!Test must be null (next to 888 Scores): {}", cs.getNext(customer3));
         LOGGER.info("Smallest scores: {}", cs.getSmallest());
     }
 }
