@@ -1,0 +1,28 @@
+128		    spend msec:86275, sec:86
+256		    spend msec:59424, sec:59
+384		    spend msec:63284, sec:63
+512		    spend msec:58013, sec:58
+640		    spend msec:58726, sec:58
+768		    spend msec:92097, sec:92
+896		    spend msec:55802, sec:55
+1024		spend msec:63470, sec:63
+1152		spend msec:56660, sec:56
+1280		spend msec:57247, sec:57	spend msec:10563, sec:10
+1408		spend msec:53728, sec:53	spend msec:10922, sec:10
+1536		spend msec:54819, sec:54	spend msec:10864, sec:10
+1664		spend msec:53912, sec:53	spend msec:11004, sec:11
+1792		spend msec:54772, sec:54	spend msec:11781, sec:11
+1920		spend msec:53808, sec:53	spend msec:10760, sec:10
+2048		spend msec:61269, sec:61	spend msec:10888, sec:10
+2560		spend msec:53110, sec:53	spend msec:10181, sec:10
+2816		spend msec:53299, sec:53	spend msec:10174, sec:10
+3072		spend msec:52585, sec:52	spend msec:10160, sec:10
+3500		spend msec:55560, sec:55	spend msec:10260, sec:10
+*4096		spend msec:52278, sec:52	spend msec:9857, sec:9
+4500		spend msec:52271, sec:52	spend msec:13670, sec:13
+5000		spend msec:58734, sec:58	spend msec:9695, sec:9
+5120		spend msec:117343, sec:117	spend msec:10834, sec:10
+7168						            spend msec:9850, sec:9
+8192						            spend msec:10350, sec:10
+
+
