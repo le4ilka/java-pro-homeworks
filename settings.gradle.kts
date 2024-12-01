@@ -1,7 +1,7 @@
 rootProject.name = "otusJava"
 include("hw01-gradle")
 include("hw02-gen-col")
-include("L08-gc")
+include("hw08-gc")
 
 pluginManagement {
     val jgitver: String by settings
@@ -24,3 +24,9 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
+include("hw08-gc:demo:demo")
+findProject(":hw08-gc:demo:demo")?.name = "demo"
+include("hw08-gc:demo")
+findProject(":hw08-gc:demo")?.name = "demo"
+include("hw08-gc:homework")
+findProject(":hw08-gc:homework")?.name = "homework"
