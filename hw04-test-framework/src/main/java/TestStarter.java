@@ -45,7 +45,6 @@ public class TestStarter {
                 }
 
                 runMethodsByAnnotation(instance.getClass(), After.class);
-
             }
         }
         LOGGER.info("Statistics passed/failed/all: {}/{}/{}", passedCounter, failedCounter, allCounter);
@@ -59,9 +58,9 @@ public class TestStarter {
     }
 
     private static void runMethodsByAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) throws InvocationTargetException, IllegalAccessException {
-        Method[] allMethods = clazz.getDeclaredMethods();
+        Set<Method> methods = getMethods(clazz);
 
-        for (Method method : allMethods) {
+        for (Method method : methods) {
             if (method.isAnnotationPresent(annotationClass)) {
                 method.setAccessible(true);
                 method.invoke(clazz);
