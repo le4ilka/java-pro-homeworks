@@ -4,10 +4,15 @@ import Annotations.*;
 
 public class ToTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ToTest.class);
+    private String name;
 
+    public ToTest(String name){
+        this.name = name;
+        LOGGER.info("{} default constructor working...", name);
+    }
     @Test
-    static void testMethod1() {
-        LOGGER.info("test1");
+    void testMethod1() {
+        LOGGER.info("test1 for {}", name);
     }
 
     @Before
@@ -26,8 +31,17 @@ public class ToTest {
     }
 
     @Test
-    static void testMethod2() {
-        LOGGER.info("test2");
+    void testMethod2() {
+        LOGGER.info("test2 for {}", name);
+        int a = 2;
+        int b = 0;
+        int result = (a / b);
+    }
+
+
+    @Test
+    void testMethod3() {
+        LOGGER.info("test3 for {}", name);
         int a = 2;
         int b = 0;
         int result = (a / b);
