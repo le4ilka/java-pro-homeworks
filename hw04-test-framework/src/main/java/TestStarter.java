@@ -1,8 +1,9 @@
-import Annotations.*;
+import Annotations.After;
+import Annotations.Before;
+import Annotations.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,60 +13,67 @@ import java.util.Set;
 
 public class TestStarter {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestStarter.class);
+    private Set<Method> beforeMethods = new HashSet<>();
+    private Set<Method> testMethods = new HashSet<>();
+    private Set<Method> afterMethods = new HashSet<>();
 
-    public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        run(ToTest.class);
-    }
-
-    private static void run(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void run(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         LOGGER.info("Start testing {}", clazz.getName());
         int passedCounter = 0;
         int failedCounter = 0;
-        int allCounter = 0;
 
-        Set<Method> methods = getMethods(clazz);
 
-        for (Method testMethod : methods) {
-            if (testMethod.isAnnotationPresent(Test.class)) {
-                Constructor<?> constructor = clazz.getConstructor(String.class);
-                String instanceName = "Instance" + (allCounter + 1);
-                var instance = constructor.newInstance(instanceName);
 
-                runMethodsByAnnotation(instance.getClass(), Before.class);
+        setMethodsByAnnotations(clazz);
 
-                try {
-                    testMethod.invoke(instance);
-                    LOGGER.info("Test {} passed", testMethod.getName());
-                    passedCounter++;
-                    allCounter++;
-                } catch (Exception e) {
-                    LOGGER.info("Test {} failed", testMethod.getName());
-                    failedCounter++;
-                    allCounter++;
-                }
+        for (Method testMethod : testMethods) {
+            Constructor<?> constructor = clazz.getConstructor(String.class);
+            String instanceName = "Instance" + (passedCounter + failedCounter + 1);
+            var instance = constructor.newInstance(instanceName);
 
-                runMethodsByAnnotation(instance.getClass(), After.class);
+            try {
+                runMethods(instance.getClass(), beforeMethods);
+                testMethod.invoke(instance);
+                LOGGER.info("Test {} passed", testMethod.getName());
+                passedCounter++;
+            } catch (Exception e) {
+                LOGGER.info("Test {} failed", testMethod.getName());
+                failedCounter++;
+            } finally {
+                runMethods(instance.getClass(), afterMethods);
             }
+
         }
-        LOGGER.info("Statistics passed/failed/all: {}/{}/{}", passedCounter, failedCounter, allCounter);
+        LOGGER.info("Statistics passed/failed/all: {}/{}/{}", passedCounter, failedCounter, testMethods.size());
     }
 
-    private static Set<Method> getMethods(Class<?> clazz) {
+    private void setMethodsByAnnotations(Class<?> clazz) {
+        Set<Method> methods = getMethods(clazz);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(Before.class)) {
+                beforeMethods.add(method);
+            }
+            if (method.isAnnotationPresent(Test.class)) {
+                testMethods.add(method);
+            }
+            if (method.isAnnotationPresent(After.class)) {
+                afterMethods.add(method);
+            }
+        }
+    }
+
+    private Set<Method> getMethods(Class<?> clazz) {
         Set<Method> methods = new HashSet<>();
         methods.addAll(List.of(clazz.getDeclaredMethods()));
         methods.addAll(List.of(clazz.getMethods()));
         return methods;
     }
 
-    private static void runMethodsByAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) throws InvocationTargetException, IllegalAccessException {
-        Set<Method> methods = getMethods(clazz);
-
+    private void runMethods(Class<?> clazz, Set<Method> methods) throws InvocationTargetException, IllegalAccessException {
         for (Method method : methods) {
-            if (method.isAnnotationPresent(annotationClass)) {
-                method.setAccessible(true);
-                method.invoke(clazz);
-                method.setAccessible(false);
-            }
+            method.setAccessible(true);
+            method.invoke(clazz);
+            method.setAccessible(false);
         }
     }
 }
