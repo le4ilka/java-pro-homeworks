@@ -6,6 +6,8 @@ plugins {
     idea
     id("io.spring.dependency-management")
     id("org.springframework.boot") apply false
+    kotlin("plugin.lombok") version "2.1.0"
+    id("io.freefair.lombok") version "8.10"
 }
 
 idea {
