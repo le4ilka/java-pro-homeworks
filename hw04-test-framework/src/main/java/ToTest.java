@@ -1,6 +1,8 @@
+import Annotations.After;
+import Annotations.Before;
+import Annotations.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import Annotations.*;
 
 public class ToTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ToTest.class);

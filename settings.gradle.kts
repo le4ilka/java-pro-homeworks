@@ -25,3 +25,4 @@ pluginManagement {
 }
 
 include("hw04-test-framework")
+include("hw05-aop")

@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
@@ -17,34 +16,32 @@ public class TestStarter {
     private Set<Method> testMethods = new HashSet<>();
     private Set<Method> afterMethods = new HashSet<>();
 
-    public void run(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void run(Class<?> clazz) {
         LOGGER.info("Start testing {}", clazz.getName());
         int passedCounter = 0;
-        int failedCounter = 0;
+        try {
+            setMethodsByAnnotations(clazz);
 
+            for (Method testMethod : testMethods) {
+                Constructor<?> constructor = clazz.getConstructor(String.class);
+                String instanceName = "Instance " + testMethod.getName();
+                var instance = constructor.newInstance(instanceName);
 
-
-        setMethodsByAnnotations(clazz);
-
-        for (Method testMethod : testMethods) {
-            Constructor<?> constructor = clazz.getConstructor(String.class);
-            String instanceName = "Instance" + (passedCounter + failedCounter + 1);
-            var instance = constructor.newInstance(instanceName);
-
-            try {
-                runMethods(instance.getClass(), beforeMethods);
-                testMethod.invoke(instance);
-                LOGGER.info("Test {} passed", testMethod.getName());
-                passedCounter++;
-            } catch (Exception e) {
-                LOGGER.info("Test {} failed", testMethod.getName());
-                failedCounter++;
-            } finally {
-                runMethods(instance.getClass(), afterMethods);
-            }
-
+                try {
+                    runMethods(instance.getClass(), beforeMethods);
+                    testMethod.invoke(instance);
+                    LOGGER.info("Test {} passed", testMethod.getName());
+                    passedCounter++;
+                } catch (Exception e) {
+                    LOGGER.info("Test {} failed", testMethod.getName());
+                } finally {
+                        runMethods(instance.getClass(), afterMethods);
+                    }
+                }
+        } catch (Exception e) {
+            LOGGER.info("Tests start failed");
         }
-        LOGGER.info("Statistics passed/failed/all: {}/{}/{}", passedCounter, failedCounter, testMethods.size());
+        LOGGER.info("Statistics passed/failed/all: {}/{}/{}", passedCounter, testMethods.size() - passedCounter, testMethods.size());
     }
 
     private void setMethodsByAnnotations(Class<?> clazz) {
@@ -69,11 +66,13 @@ public class TestStarter {
         return methods;
     }
 
-    private void runMethods(Class<?> clazz, Set<Method> methods) throws InvocationTargetException, IllegalAccessException {
+    private void runMethods(Class<?> clazz, Set<Method> methods) {
         for (Method method : methods) {
-            method.setAccessible(true);
-            method.invoke(clazz);
-            method.setAccessible(false);
+            try {
+                method.invoke(clazz);
+            }catch (Exception e){
+                LOGGER.info("{} failed", method.getName());
+            }
         }
     }
 }
