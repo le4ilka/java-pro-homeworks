@@ -22,7 +22,7 @@ public class Boxing {
 
     private static void calcInteger() throws InterruptedException {
         int limit = Integer.MAX_VALUE;
-        Integer counter = 0;
+        int counter = 0;
         for (int idx = 0; idx < limit; idx++) {
 
             counter += 1;
