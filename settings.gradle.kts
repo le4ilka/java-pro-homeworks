@@ -24,9 +24,3 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-include("hw08-gc:demo:demo")
-findProject(":hw08-gc:demo:demo")?.name = "demo"
-include("hw08-gc:demo")
-findProject(":hw08-gc:demo")?.name = "demo"
-include("hw08-gc:homework")
-findProject(":hw08-gc:homework")?.name = "homework"
