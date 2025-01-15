@@ -10,5 +10,10 @@ public class Application {
         tli.calculation(8);
         tli.calculation(3,1);
         tli.calculation(1,1,1);
+
+        LOGGER.info("Application countinue...");
+        SecondTestLoggingInterface second = Ioc.createSecondClass();
+        second.sum(1);
+        second.sum(1, 2, 3);
     }
 }

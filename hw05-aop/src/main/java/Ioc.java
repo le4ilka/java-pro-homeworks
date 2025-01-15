@@ -12,21 +12,26 @@ class Ioc {
     private Ioc() {}
 
     static TestLoggingInterface createMyClass() {
-        InvocationHandler handler = new DemoInvocationHandler(new TestLogging());
+        InvocationHandler handler = new DemoInvocationHandler<>(new TestLogging());
         return (TestLoggingInterface)
                 Proxy.newProxyInstance(Ioc.class.getClassLoader(), new Class<?>[] {TestLoggingInterface.class}, handler);
     }
 
-    static class DemoInvocationHandler implements InvocationHandler {
-        private final TestLoggingInterface myClass;
+    static SecondTestLoggingInterface createSecondClass() {
+        InvocationHandler handler = new DemoInvocationHandler<>(new SecondTestLogging());
+        return (SecondTestLoggingInterface)
+                Proxy.newProxyInstance(Ioc.class.getClassLoader(), new Class<?>[] {SecondTestLoggingInterface.class}, handler);
+    }
 
-        DemoInvocationHandler(TestLoggingInterface myClass) {
+    static class DemoInvocationHandler<T> implements InvocationHandler {
+        private final T myClass;
+        DemoInvocationHandler(T myClass) {
             this.myClass = myClass;
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Class<TestLogging> clazz = TestLogging.class;
+            Class<?> clazz = myClass.getClass();
             Method[] methods = clazz.getDeclaredMethods();
             for (Method method1: methods) {
                 if (method1.isAnnotationPresent(Log.class) &&
@@ -37,6 +42,9 @@ class Ioc {
             }
             return method.invoke(myClass, args);
         }
+
+
+
 
         @Override
         public String toString() {
