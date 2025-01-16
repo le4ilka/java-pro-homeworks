@@ -6,6 +6,7 @@ public class Application {
     public static void main(String[] args) {
         LOGGER.info("Application starts...");
         TestLoggingInterface tli = Ioc.createMyClass();
+        tli.calculation("abc");
         tli.calculation(3);
         tli.calculation(8);
         tli.calculation(3,1);

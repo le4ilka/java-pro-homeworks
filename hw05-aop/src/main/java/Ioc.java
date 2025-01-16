@@ -3,6 +3,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,11 +29,15 @@ class Ioc {
 
     static class DemoInvocationHandler implements InvocationHandler {
         private final Object myClass;
-        Set<Method> loggingMethods = new HashSet<>();
+        private Set<Method> loggingMethods = new HashSet<>();
+
 
         DemoInvocationHandler(Object myClass) {
             this.myClass = myClass;
+            this.loggingMethods = findLoggingMethods(myClass);
+        }
 
+        private Set<Method> findLoggingMethods(Object myClass) {
             Class<?> clazz = myClass.getClass();
             Method[] methods = clazz.getDeclaredMethods();
             for (Method method1 : methods) {
@@ -40,16 +45,27 @@ class Ioc {
                     this.loggingMethods.add(method1);
                 }
             }
+            return loggingMethods;
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             for (Method method1 : loggingMethods) {
                 if (method.getName().equals(method1.getName()) &&
-                        (args.length == method1.getParameterCount())) {
-                    logger.info("executed method: {}, param: {}", method1.getName(), Arrays.toString(args));
+                        (args.length == method1.getParameterCount())
+                ) {
+                    Parameter[] param = method.getParameters();
+                    Parameter[] param1 = method1.getParameters();
+                    boolean isEquals = false;
+                    for (int i = 0; i < param.length; i++) {
+                        isEquals = param[i].toString().equals(param1[i].toString());
+                    }
+                    if (isEquals){
+                        logger.info("executed method: {}, param: {}", method1.getName(), Arrays.toString(args));
+                    }
                 }
             }
+
             return method.invoke(myClass, args);
         }
 
