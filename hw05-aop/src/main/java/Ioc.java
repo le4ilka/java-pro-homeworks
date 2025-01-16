@@ -48,24 +48,30 @@ class Ioc {
             return loggingMethods;
         }
 
+        Boolean isSignatureEquals(Method method1, Method method2) {
+            Parameter[] params1 = method1.getParameters();
+            Parameter[] params2 = method2.getParameters();
+            if (params1.length != params2.length) {
+                return false;
+            }
+            for (int i = 0; i < params1.length; i++) {
+                if (params1[i].toString().equals(params2[i].toString())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             for (Method method1 : loggingMethods) {
                 if (method.getName().equals(method1.getName()) &&
-                        (args.length == method1.getParameterCount())
+                        args.length == method1.getParameterCount() &&
+                        isSignatureEquals(method1, method)
                 ) {
-                    Parameter[] param = method.getParameters();
-                    Parameter[] param1 = method1.getParameters();
-                    boolean isEquals = false;
-                    for (int i = 0; i < param.length; i++) {
-                        isEquals = param[i].toString().equals(param1[i].toString());
-                    }
-                    if (isEquals){
-                        logger.info("executed method: {}, param: {}", method1.getName(), Arrays.toString(args));
-                    }
+                    logger.info("executed method: {}, param: {}", method1.getName(), Arrays.toString(args));
                 }
             }
-
             return method.invoke(myClass, args);
         }
 
