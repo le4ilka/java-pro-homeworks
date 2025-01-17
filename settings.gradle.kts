@@ -31,3 +31,6 @@ include("hw03-gc:homework")
 findProject(":hw03-gc:homework")?.name = "homework"
 include("hw03-gc:demo")
 findProject(":hw03-gc:demo")?.name = "demo"
+include("hw04-test-framework")
+include("hw05-aop")
+include("hw06-oop")
