@@ -29,7 +29,7 @@ class Ioc {
 
     static class DemoInvocationHandler implements InvocationHandler {
         private final Object myClass;
-        private Set<Method> loggingMethods = new HashSet<>();
+        private Set<String> loggingMethods = new HashSet<>();
 
 
         DemoInvocationHandler(Object myClass) {
@@ -37,44 +37,28 @@ class Ioc {
             this.loggingMethods = findLoggingMethods(myClass);
         }
 
-        private Set<Method> findLoggingMethods(Object myClass) {
+        private Set<String> findLoggingMethods(Object myClass) {
             Class<?> clazz = myClass.getClass();
             Method[] methods = clazz.getDeclaredMethods();
             for (Method method1 : methods) {
                 if (method1.isAnnotationPresent(Log.class)) {
-                    this.loggingMethods.add(method1);
+                    this.loggingMethods.add(getMethodSignature(method1));
                 }
             }
             return loggingMethods;
         }
 
-        Boolean isSignatureEquals(Method method1, Method method2) {
-            Parameter[] params1 = method1.getParameters();
-            Parameter[] params2 = method2.getParameters();
-            if (params1.length != params2.length) {
-                return false;
-            }
-            for (int i = 0; i < params1.length; i++) {
-                if (params1[i].toString().equals(params2[i].toString())) {
-                    return true;
-                }
-            }
-            return false;
+        private String getMethodSignature(Method method) {
+            return method.getName() + Arrays.toString(method.getParameterTypes());
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            for (Method method1 : loggingMethods) {
-                if (method.getName().equals(method1.getName()) &&
-                        args.length == method1.getParameterCount() &&
-                        isSignatureEquals(method1, method)
-                ) {
-                    logger.info("executed method: {}, param: {}", method1.getName(), Arrays.toString(args));
-                }
+            if (loggingMethods.contains(getMethodSignature(method))) {
+                logger.info("executed method: {}, param: {}", method.getName(), Arrays.toString(args));
             }
             return method.invoke(myClass, args);
         }
-
 
         @Override
         public String toString() {
