@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Cell implements CellInterface, Comparable<Cell>{
+public class Cell implements Cells, Comparable<Cell>{
     private static final Logger log = LoggerFactory.getLogger(Cell.class);
     private final Denomination denomination;
     private final Set<Banknote> banknotes;
@@ -49,5 +49,4 @@ public class Cell implements CellInterface, Comparable<Cell>{
         Integer currentDenValue = this.getDenominationValue();
         return currentDenValue.compareTo(o.getDenominationValue()) ;
     }
-
 }

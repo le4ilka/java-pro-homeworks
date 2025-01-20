@@ -1,4 +1,4 @@
-public interface CellInterface {
+public interface Cells {
     void add(Banknote banknote);
 
     void del();
