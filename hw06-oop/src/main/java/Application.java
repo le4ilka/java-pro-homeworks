@@ -27,7 +27,7 @@ public class Application {
         wad.add(banknote5000);
         wad.add(banknote10);
 
-        AtmInterface atm1 = new Atm();
+        Atm atm1 = new Atm();
         atm1.takeBanknotes(wad);
         atm1.moneyAmountInfo();
 
