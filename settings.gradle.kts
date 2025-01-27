@@ -34,3 +34,4 @@ findProject(":hw03-gc:demo")?.name = "demo"
 include("hw04-test-framework")
 include("hw05-aop")
 include("hw06-oop")
+include("hw08-serialization")
