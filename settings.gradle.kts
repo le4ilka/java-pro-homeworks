@@ -35,3 +35,8 @@ include("hw04-test-framework")
 include("hw05-aop")
 include("hw06-oop")
 include("hw08-serialization")
+include("hw09-jdbc")
+include("hw09-jdbc:demo")
+findProject(":hw09-jdbc:demo")?.name = "demo"
+include("hw09-jdbc:homework")
+findProject(":hw09-jdbc:homework")?.name = "homework"
